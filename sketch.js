@@ -67,6 +67,11 @@ function draw() {
 if (ball.position.y > height)
 {
   createCanvas(800,600);
+  textSize(100);
+  text('END GAME',170, 400);
+  fill(0);
+
+  
 }
 
   ball.bounce(bricks, brickHit);

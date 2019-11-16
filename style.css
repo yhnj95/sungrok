@@ -1,0 +1,30 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #cdcdcd;
+}
+canvas {
+  display: block;
+}
+
+#content {
+}
+
+#text {
+  display: block;
+  margin-top: 440px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 580px;
+  height: 300px;
+  padding: 10px;
+  /* text-align: center; */
+  background-color: #dedede;
+}
+
+#footer {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+}

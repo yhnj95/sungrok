@@ -64,8 +64,9 @@ function draw() {
     var swing = (ball.position.x-paddle.position.x)/3;
     ball.setSpeed(MAX_SPEED, ball.getDirection()+swing);
   }
-if (ball.x>height){
-  noLoop()
+if (ball.position.y > height)
+{
+  createCanvas(800,600);
 }
 
   ball.bounce(bricks, brickHit);

@@ -1,33 +1,83 @@
-let canvas;
-let canvasWidth = 600;
-let canvasHeight = 400;
-var wallLeft, mind
-var Max_SPEED = 10;
+//breakout close (core mechanics)
+//mouse to control the paddle, click to start
 
+var paddle, ball, wallTop, wallBottom, wallLeft, wallRight;
+var bricks;
+var MAX_SPEED = 9;
+var WALL_THICKNESS = 30;
+var BRICK_W = 40;
+var BRICK_H = 20;
+var BRICK_MARGIN = 4;
+var ROWS = 9;
+var COLUMNS = 16;
 
 function setup() {
-  canvas = createCanvas(canvasWidth, canvasHeight);
-canvas.position(windowWidth/2 - canvasWidth/2, 20);
-  wallLeft = createSprite(0,0,20,width*2);
-  setSpeed(Max_SPEED, -180);
+  createCanvas(800, 600);
+
+  paddle = createSprite(width/2, height-50, 100, 10);
+  paddle.immovable = true;
+
+  wallTop = createSprite(width/2, -WALL_THICKNESS/2, width+WALL_THICKNESS*2, WALL_THICKNESS);
+  wallTop.immovable = true;
+
+  wallBottom = createSprite(width/2, height+WALL_THICKNESS/2, width+WALL_THICKNESS*2, WALL_THICKNESS);
+  wallBottom.immovable = false;
+
+  wallLeft = createSprite(-WALL_THICKNESS/2, height/2, WALL_THICKNESS, height);
+  wallLeft.immovable = true;
+
+  wallRight = createSprite(width+WALL_THICKNESS/2, height/2, WALL_THICKNESS, height);
+  wallRight.immovable = true;
+
+  bricks = new Group();
+
+  var offsetX = width/2-(COLUMNS-1)*(BRICK_MARGIN+BRICK_W)/2;
+  var offsetY = 80;
+
+  for(var r = 0; r<ROWS; r++)
+    for(var c = 0; c<COLUMNS; c++) {
+      var brick = createSprite(offsetX+c*(BRICK_W+BRICK_MARGIN), offsetY+r*(BRICK_H+BRICK_MARGIN), BRICK_W, BRICK_H);
+      brick.shapeColor = color(255, 255, 255);
+      bricks.add(brick);
+      brick.immovable = true;
+    }
+
+  //the easiest way to avoid pesky multiple collision is to
+  //have the ball bigger than the bricks
+  ball = createSprite(width/2, height-200, 11, 11);
+  ball.maxSpeed = MAX_SPEED;
+  paddle.shapeColor = ball.shapeColor = color(255, 255, 255);
+
 }
 
 function draw() {
-  background(255,255,255);
-  textAlign(CENTER);
-  text('마우스를 눌러봐!');
+  background(247, 134, 131);
+
+  paddle.position.x = constrain(mouseX, paddle.width/2, width-paddle.width/2);
+
+  ball.bounce(wallTop);
+  ball.bounce(wallLeft);
+  ball.bounce(wallRight);
+
+  if(ball.bounce(paddle))
+  {
+    var swing = (ball.position.x-paddle.position.x)/3;
+    ball.setSpeed(MAX_SPEED, ball.getDirection()+swing);
+  }
+if (ball.x>height){
+  noLoop()
+}
+
+  ball.bounce(bricks, brickHit);
+
   drawSprites();
-  bounce(wallLeft);
 }
 
 function mousePressed() {
-  var s = createSprite(mouseX, mouseY, 15, 15);
-  s.velocity.x = random(-5, 5)
-  s.velocity.y = random(-5, 5)
+  if(ball.velocity.x == 0 && ball.velocity.y == 0)
+    ball.setSpeed(MAX_SPEED, random(90-10, 90+10));
 }
 
-var swing;
-if(bounce(mind)){
-  position.copy()-mind.position.y/3;
-  setSpeed(random(-5, 5),getDirection()-swing);
+function brickHit(ball, brick) {
+  brick.remove();
 }
